@@ -1,0 +1,7 @@
+{
+    "kmeans_ncluster": 6,
+    "output_csv": "../data.csv",
+    "image_directory": "../images",
+    "model": "vit",
+    "dimension_reduction": "tsne"
+}
