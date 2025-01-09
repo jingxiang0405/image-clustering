@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="board">
+        <div v-if="images!==undefined" class="board">
             <div v-for="(image, i) in images" :key="i" class="image-container" :style="getImageStyle(image)"
                 @mouseover="showTooltip(image.theme, image.tag, $event)" @mouseleave="hideTooltip">
                 <img :src="image.img_path" :alt="image.tag" class="image" />
@@ -14,11 +14,10 @@
 </template>
 
 <script>
-import * as d3 from 'd3'
 export default {
     data() {
         return {
-            images: [], // Load CSV data into this array
+             // Load CSV data into this array
             showFrames: false,
             tooltip: {
                 visible: false,
@@ -26,23 +25,16 @@ export default {
                 text: "",
                 x: 0,
                 y: 0
-            }
+            },
+            themes: [],
+            tags : [],
+            boardWidth: 1000, // Define board dimensions
+            boardHeight: 1000
         };
     },
-    async created() {
-        await d3.csv("../../data.csv").then((data) => {
-            console.log(data)
-            this.images = data.map(row => ({
-                x: parseFloat(row.x)*150, // scale
-                y: parseFloat(row.y)*150,
-                img_path: row.name,
-                cluster: parseInt(row.cluster),
-                theme: row.theme,
-                tag: row.tag
-            }));
-        })
 
-        console.log(this.images)
+    props:{
+        images: undefined
     },
     computed: {
         tooltipStyle() {
@@ -59,9 +51,8 @@ export default {
         },
         getImageStyle(image) {
             const styles = {
-                position: "absolute",
                 top: `${image.y}px`,
-                left: `${image.x}px`,
+                left: `${image.x + 100}px`,
                 width: '100%',
                 height: '100%',
                 border: this.showFrames ? `3px solid ${this.getClusterColor(image.cluster)}` : "none",
@@ -82,16 +73,22 @@ export default {
         },
         hideTooltip() {
             this.tooltip.visible = false;
+        },
+        filter(themes, tags){
+            console.log("theme:", themes)
+            console.log("tags:", tags)
         }
+
+
     }
 };
 </script>
 
 <style>
 .board {
-    width: 1000px;
-    height: 1000px;
-    overflow: auto;
+    position: relative;
+    width: 80vw;
+    height: 100vh;
     border: 1px solid #ccc;
 }
 
